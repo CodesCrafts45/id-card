@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}রেজিস্ট্রেশন{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+        <div class="color-card">
+            <div class="color-card-header text-center">
+                <i class="bi bi-person-plus-fill fs-3 d-block mb-1"></i>
+                <h4 class="mb-0 fw-bold">রেজিস্ট্রেশন ফর্ম</h4>
+            </div>
+            <div class="p-4 p-md-5">
+                <form method="post" enctype="multipart/form-data" novalidate>
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label">{{ form.name.label }}</label>
+                            {{ form.name }}
+                            {% if form.name.errors %}<div class="text-danger small mt-1">{{ form.name.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">{{ form.class_name.label }}</label>
+                            {{ form.class_name }}
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">{{ form.roll.label }}</label>
+                            {{ form.roll }}
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">{{ form.designation.label }}</label>
+                            {{ form.designation }}
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">{{ form.blood_group.label }}</label>
+                            {{ form.blood_group }}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">{{ form.address.label }}</label>
+                            {{ form.address }}
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">{{ form.phone.label }}</label>
+                            {{ form.phone }}
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">{{ form.email.label }}</label>
+                            {{ form.email }}
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">{{ form.profile_picture.label }}</label>
+                            {{ form.profile_picture }}
+                        </div>
+                    </div>
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-color btn-lg">
+                            <i class="bi bi-check2-circle me-2"></i>রেজিস্ট্রেশন সম্পন্ন
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}হোম — {{ settings.event_name }}{% endblock %}
+{% block content %}
+<div class="text-center py-4 py-md-5">
+    <h1 class="hero-title mb-2">{{ settings.event_name }}</h1>
+    {% if settings.institution_address %}
+        <p class="hero-sub mb-4">{{ settings.institution_address }}</p>
+    {% else %}
+        <p class="hero-sub mb-4">ডিজিটাল আইডি কার্ড তৈরি করুন সহজে</p>
+    {% endif %}
+    <div class="d-flex justify-content-center gap-3 flex-wrap">
+        <a href="{% url 'register' %}" class="btn btn-color btn-lg px-4">
+            <i class="bi bi-person-plus-fill me-2"></i>রেজিস্ট্রেশন করুন
+        </a>
+        <a href="{% url 'student_list' %}" class="btn btn-outline-color btn-lg px-4">
+            <i class="bi bi-grid-3x3-gap me-2"></i>কার্ড তালিকা
+        </a>
+    </div>
+</div>
+
+{% if recent_students %}
+<div class="mt-3">
+    <h5 class="mb-3 fw-semibold text-white"><i class="bi bi-clock-history me-2"></i>সাম্প্রতিক রেজিস্ট্রেশন</h5>
+    <div class="row g-3">
+        {% for s in recent_students %}
+        <div class="col-md-4 col-sm-6">
+            <a href="{% url 'card_view' s.unique_id %}" class="member-card">
+                {% if s.profile_picture %}
+                    <img src="{{ s.profile_picture.url }}" class="member-avatar" alt="">
+                {% else %}
+                    <div class="member-avatar-placeholder"><i class="bi bi-person-fill"></i></div>
+                {% endif %}
+                <div class="flex-grow-1 min-w-0">
+                    <div class="fw-semibold text-truncate">{{ s.name }}</div>
+                    <small class="text-muted">{{ s.class_name }}{% if s.roll %} · রোল {{ s.roll }}{% endif %}</small>
+                </div>
+                <i class="bi bi-chevron-right text-muted"></i>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}নোটিশ{% endblock %}
+{% block content %}
+<h3 class="fw-bold mb-4 text-white"><i class="bi bi-megaphone-fill me-2"></i>নোটিশ বোর্ড</h3>
+<div class="row g-4">
+    {% for n in notices %}
+    <div class="col-md-6 col-lg-4">
+        <div class="notice-card">
+            {% if n.image %}
+                <img src="{{ n.image.url }}" class="w-100" style="height:170px;object-fit:cover" alt="{{ n.title }}">
+            {% else %}
+                <div class="d-flex align-items-center justify-content-center" style="height:120px;background:linear-gradient(135deg,var(--grad-start),var(--grad-end))">
+                    <i class="bi bi-megaphone fs-1 text-white"></i>
+                </div>
+            {% endif %}
+            <div class="p-3">
+                <h5 class="fw-semibold mb-1">{{ n.title }}</h5>
+                <p class="text-muted small mb-3">{{ n.content|truncatewords:18 }}</p>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'notice_detail' n.pk %}" class="btn btn-sm btn-color">বিস্তারিত</a>
+                    {% if n.pdf_file %}
+                        <a href="{% url 'notice_pdf' n.pk %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-download me-1"></i>PDF</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center py-5">
+        <div class="color-card d-inline-block p-5">
+            <i class="bi bi-inbox fs-1 d-block mb-2 text-muted"></i>
+            <p class="text-muted mb-0">কোনো নোটিশ নেই</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

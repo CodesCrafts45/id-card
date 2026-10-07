@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}মেম্বার তালিকা{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+    <h3 class="fw-bold mb-0 text-white"><i class="bi bi-people-fill me-2"></i>সকল মেম্বার</h3>
+    <form method="get" class="d-flex gap-2">
+        <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="নাম / রোল / ফোন..." style="min-width:200px">
+        <button class="btn btn-color" type="submit"><i class="bi bi-search"></i></button>
+    </form>
+</div>
+<div class="row g-3">
+    {% for s in students %}
+    <div class="col-lg-4 col-md-6">
+        <a href="{% url 'card_view' s.unique_id %}" class="member-card">
+            {% if s.profile_picture %}
+                <img src="{{ s.profile_picture.url }}" class="member-avatar" alt="">
+            {% else %}
+                <div class="member-avatar-placeholder"><i class="bi bi-person-fill"></i></div>
+            {% endif %}
+            <div class="flex-grow-1 min-w-0">
+                <div class="fw-semibold text-truncate">{{ s.name }}</div>
+                <small class="text-muted d-block text-truncate">{{ s.class_name }}{% if s.roll %} · {{ s.roll }}{% endif %}</small>
+                {% if s.phone %}<small class="text-muted"><i class="bi bi-telephone me-1"></i>{{ s.phone }}</small>{% endif %}
+            </div>
+            <i class="bi bi-chevron-right text-muted"></i>
+        </a>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center py-5">
+        <div class="color-card d-inline-block p-5">
+            <i class="bi bi-inbox fs-1 d-block mb-2 text-muted"></i>
+            <p class="text-muted mb-3">কোনো রেজিস্ট্রেশন নেই</p>
+            <a href="{% url 'register' %}" class="btn btn-color">রেজিস্ট্রেশন করুন</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

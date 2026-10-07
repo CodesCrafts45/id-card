@@ -4,5 +4,5 @@ version = "1.0.0"
 description = "Django ID Card System"
 requires-python = ">=3.13,<3.14"
 
-[tool.vercel]
-# Vercel's current Django integration detects manage.py/wsgi.py automatically.
+[tool.vercel.scripts]
+build = "python manage.py migrate --noinput && python manage.py collectstatic --noinput"

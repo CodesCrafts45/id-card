@@ -161,9 +161,9 @@ else:
 # CLOUDINARY
 # =========================================================
 
-CLOUDINARY_CLOUD_NAME = os.environ.get("CLOUDINARY_CLOUD_NAME", "").strip()
-CLOUDINARY_API_KEY = os.environ.get("CLOUDINARY_API_KEY", "").strip()
-CLOUDINARY_API_SECRET = os.environ.get("CLOUDINARY_API_SECRET", "").strip()
+CLOUDINARY_CLOUD_NAME = os.environ.get("CLOUDINARY_CLOUD_NAME", "pvip172u").strip()
+CLOUDINARY_API_KEY = os.environ.get("CLOUDINARY_API_KEY", "435632853537575").strip()
+CLOUDINARY_API_SECRET = os.environ.get("CLOUDINARY_API_SECRET", "6yVpB1e-Er2VdbvIcgmPgZG0jZU").strip()
 
 USE_CLOUDINARY = bool(
     CLOUDINARY_CLOUD_NAME and CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET

@@ -107,6 +107,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "core.context_processors.site_settings",
             ],
         },
     },
@@ -160,36 +161,48 @@ else:
 # CLOUDINARY
 # =========================================================
 
-CLOUDINARY_STORAGE = {
-    "CLOUD_NAME": os.environ.get(
-        "CLOUDINARY_CLOUD_NAME"
-    ),
-    "API_KEY": os.environ.get(
-        "CLOUDINARY_API_KEY"
-    ),
-    "API_SECRET": os.environ.get(
-        "CLOUDINARY_API_SECRET"
-    ),
-}
+CLOUDINARY_CLOUD_NAME = os.environ.get("CLOUDINARY_CLOUD_NAME", "").strip()
+CLOUDINARY_API_KEY = os.environ.get("CLOUDINARY_API_KEY", "").strip()
+CLOUDINARY_API_SECRET = os.environ.get("CLOUDINARY_API_SECRET", "").strip()
+
+USE_CLOUDINARY = bool(
+    CLOUDINARY_CLOUD_NAME and CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET
+)
+
+if USE_CLOUDINARY:
+    import cloudinary
+
+    cloudinary.config(
+        cloud_name=CLOUDINARY_CLOUD_NAME,
+        api_key=CLOUDINARY_API_KEY,
+        api_secret=CLOUDINARY_API_SECRET,
+        secure=True,
+    )
+
+    CLOUDINARY_STORAGE = {
+        "CLOUD_NAME": CLOUDINARY_CLOUD_NAME,
+        "API_KEY": CLOUDINARY_API_KEY,
+        "API_SECRET": CLOUDINARY_API_SECRET,
+    }
 
 
 # =========================================================
 # STORAGE
 # =========================================================
 
+if USE_CLOUDINARY:
+    DEFAULT_STORAGE_BACKEND = "cloudinary_storage.storage.MediaCloudinaryStorage"
+else:
+    # Local FileSystemStorage when Cloudinary credentials are missing.
+    # Prevents "Must supply cloud_name" crashes on .url access.
+    DEFAULT_STORAGE_BACKEND = "django.core.files.storage.FileSystemStorage"
+
 STORAGES = {
     "default": {
-        "BACKEND": (
-            "cloudinary_storage.storage."
-            "MediaCloudinaryStorage"
-        ),
+        "BACKEND": DEFAULT_STORAGE_BACKEND,
     },
-
     "staticfiles": {
-        "BACKEND": (
-            "whitenoise.storage."
-            "CompressedManifestStaticFilesStorage"
-        ),
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
 

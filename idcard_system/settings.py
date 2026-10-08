@@ -1,16 +1,17 @@
 from pathlib import Path
 import os
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-
-from pathlib import Path
-import os
 from dotenv import load_dotenv
+
+
+# =========================================================
+# BASE DIRECTORY
+# =========================================================
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 load_dotenv(BASE_DIR / ".env")
+
 
 # =========================================================
 # SECURITY
@@ -20,11 +21,12 @@ SECRET_KEY = os.environ.get(
     "DJANGO_SECRET_KEY",
     os.environ.get(
         "SECRET_KEY",
-        "django-insecure-local-development-only-change-this"
-    )
+        "django-insecure-local-development-only-change-this",
+    ),
 )
 
-DEBUG = os.environ.get("DEBUG", "True").lower() in (
+# Production-safe default
+DEBUG = os.environ.get("DEBUG", "False").lower() in (
     "true",
     "1",
     "yes",
@@ -49,10 +51,11 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
-    # Project apps
+    # Cloudinary
     "cloudinary",
     "cloudinary_storage",
-    
+
+    # Project apps
     "core",
     "cards",
     "notices",
@@ -65,7 +68,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    
+
     "whitenoise.middleware.WhiteNoiseMiddleware",
 
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -119,7 +122,17 @@ WSGI_APPLICATION = "idcard_system.wsgi.application"
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
+
+# Production-এ DATABASE_URL বাধ্যতামূলক
+if not DATABASE_URL and not DEBUG:
+    raise RuntimeError(
+        "DATABASE_URL is required in production."
+    )
+
+
+# Neon PostgreSQL
 if DATABASE_URL:
+
     import dj_database_url
 
     DATABASES = {
@@ -132,8 +145,9 @@ if DATABASE_URL:
     }
 
 
-
+# Local development-এর জন্য SQLite
 else:
+
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
@@ -147,9 +161,15 @@ else:
 # =========================================================
 
 CLOUDINARY_STORAGE = {
-    "CLOUD_NAME": os.environ.get("CLOUDINARY_CLOUD_NAME"),
-    "API_KEY": os.environ.get("CLOUDINARY_API_KEY"),
-    "API_SECRET": os.environ.get("CLOUDINARY_API_SECRET"),
+    "CLOUD_NAME": os.environ.get(
+        "CLOUDINARY_CLOUD_NAME"
+    ),
+    "API_KEY": os.environ.get(
+        "CLOUDINARY_API_KEY"
+    ),
+    "API_SECRET": os.environ.get(
+        "CLOUDINARY_API_SECRET"
+    ),
 }
 
 
@@ -159,10 +179,17 @@ CLOUDINARY_STORAGE = {
 
 STORAGES = {
     "default": {
-        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+        "BACKEND": (
+            "cloudinary_storage.storage."
+            "MediaCloudinaryStorage"
+        ),
     },
+
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        "BACKEND": (
+            "whitenoise.storage."
+            "CompressedManifestStaticFilesStorage"
+        ),
     },
 }
 
@@ -223,7 +250,9 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = []
 
 if (BASE_DIR / "static").exists():
-    STATICFILES_DIRS.append(BASE_DIR / "static")
+    STATICFILES_DIRS.append(
+        BASE_DIR / "static"
+    )
 
 
 # =========================================================
@@ -268,7 +297,7 @@ CSRF_TRUSTED_ORIGINS = [
     origin.strip()
     for origin in os.environ.get(
         "CSRF_TRUSTED_ORIGINS",
-        ""
+        "",
     ).split(",")
     if origin.strip()
 ]
@@ -285,26 +314,18 @@ if not DEBUG:
         "https",
     )
 
-    SESSION_COOKIE_SECURE = True
-
-    CSRF_COOKIE_SECURE = True
-
-    SECURE_CONTENT_TYPE_NOSNIFF = True
-
-    SECURE_REFERRER_POLICY = "same-origin"
-
-
-
-if not DEBUG:
-    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SECURE_SSL_REDIRECT = True
 
     SESSION_COOKIE_SECURE = True
+
     CSRF_COOKIE_SECURE = True
 
     SECURE_CONTENT_TYPE_NOSNIFF = True
+
     SECURE_REFERRER_POLICY = "same-origin"
 
     SECURE_HSTS_SECONDS = 31536000
+
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+
     SECURE_HSTS_PRELOAD = True
